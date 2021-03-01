@@ -9,7 +9,8 @@
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const assert = chai.assert;
-let Translator = require("../components/translator.js");
+const server = require("../server.js");
+chai.use(chaiHttp);
 
 suite("Functional Tests", () => {
   suite('"POST" to /api/translate', () => {
@@ -21,38 +22,78 @@ suite("Functional Tests", () => {
         translation:
           "Mangoes are my <span class='highlight'>favourite</span> fruit.",
       };
-
-      //done();
+      chai
+        .request(server)
+        .post("/api/translate")
+        .send({ text, locale })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, "application/json");
+          assert.deepEqual(res.body, output);
+          done();
+        });
     });
 
     test("POST with text and invalid locale", (done) => {
       const text = "'Mangoes are my favorite fruit.'";
       const locale = "russian-to-spanish";
       const error = { error: "Invalid value for locale field" };
-
-      //done();
+      chai
+        .request(server)
+        .post("/api/translate")
+        .send({ text, locale })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, "application/json");
+          assert.deepEqual(res.body, error);
+          done();
+        });
     });
 
     test("POST with missing text field", (done) => {
       const locale = "american-to-british";
       const error = { error: "Required field(s) missing" };
-
-      //done();
+      chai
+        .request(server)
+        .post("/api/translate")
+        .send({ locale })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, "application/json");
+          assert.deepEqual(res.body, error);
+          done();
+        });
     });
 
     test("POST with missing locale field", (done) => {
       const text = "freeCodeCamp rocks!";
       const error = { error: "Required field(s) missing" };
-
-      //done();
+      chai
+        .request(server)
+        .post("/api/translate")
+        .send({ text })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, "application/json");
+          assert.deepEqual(res.body, error);
+          done();
+        });
     });
 
     test("POST with missing text", (done) => {
       const text = "";
       const locale = "american-to-british";
       const error = { error: "No text to translate" };
-
-      //done();
+      chai
+        .request(server)
+        .post("/api/translate")
+        .send({ text, locale })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, "application/json");
+          assert.deepEqual(res.body, error);
+          done();
+        });
     });
 
     test("POST with text that needs no translation", (done) => {
@@ -62,8 +103,16 @@ suite("Functional Tests", () => {
         text: "SaintPeter and nhcarrigan say hello!",
         translation: "Everything looks good to me!",
       };
-
-      //done();
+      chai
+        .request(server)
+        .post("/api/translate")
+        .send({ text, locale })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          assert.equal(res.type, "application/json");
+          assert.deepEqual(res.body, output);
+          done();
+        });
     });
   });
 });
