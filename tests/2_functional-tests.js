@@ -15,12 +15,12 @@ chai.use(chaiHttp);
 suite("Functional Tests", () => {
   suite('"POST" to /api/translate', () => {
     test("POST with text and locale fields populated", (done) => {
-      const text = "'Mangoes are my favorite fruit.'";
+      const text = "Mangoes are my favorite fruit.";
       const locale = "american-to-british";
       const output = {
-        text: "Mangoes are my favorite fruit",
+        text: "Mangoes are my favorite fruit.",
         translation:
-          "Mangoes are my <span class='highlight'>favourite</span> fruit.",
+          'Mangoes are my <span class="highlight">favourite</span> fruit.',
       };
       chai
         .request(server)
@@ -35,7 +35,7 @@ suite("Functional Tests", () => {
     });
 
     test("POST with text and invalid locale", (done) => {
-      const text = "'Mangoes are my favorite fruit.'";
+      const text = "Mangoes are my favorite fruit.";
       const locale = "russian-to-spanish";
       const error = { error: "Invalid value for locale field" };
       chai
